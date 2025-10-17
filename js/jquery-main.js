@@ -1,5 +1,3 @@
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 //main code for jQuery
 $(document).ready(function(){
     console.log("Community Job Board jQuery frontend loaded.");
@@ -16,4 +14,5 @@ $(document).ready(function(){
             console.error("Error fetching jobs:", error);
         }
     }
+
 });
