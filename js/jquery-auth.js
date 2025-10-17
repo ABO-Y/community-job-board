@@ -47,7 +47,8 @@ $(document).ready(function(){
         }
 
         localStorage.setItem('currentUser', JSON.stringify(user));
-        alert('Welcome, ${user.name}.')
+        alert(`Welcome, ${user.name}.`)
         window.location.href = 'dashboard.html';
     });
+
 });
