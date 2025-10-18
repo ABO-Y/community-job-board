@@ -1,9 +1,18 @@
 // applications.js
+document.getElementById("applyForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const application = {
+    jobId: selectedJobId,
+    userId: auth.currentUser.uid,
+    coverLetter: coverLetter.value,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  };
 
-const applications = JSON.parse(localStorage.getItem("applications")) || [];
-const applicationsList = document.getElementById("applications-list");
-const jobFilter = document.getElementById("jobFilter");
-const searchInput = document.getElementById("searchInput");
+  db.collection("applications").add(application)
+    .then(() => alert("Application submitted!"))
+    .catch(err => alert(err.message));
+});
+
 
 // Group applications by job title
 const grouped = {};
