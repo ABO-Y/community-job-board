@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Community Job Board</title>
   <link rel="stylesheet" href="../css/main.css">
+
 </head>
 <body>
   <header>
@@ -50,5 +51,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "communityjobboard.firebaseapp.com",
+    projectId: "communityjobboard",
+    storageBucket: "communityjobboard.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
 
 </html>
