@@ -1,80 +1,75 @@
-import { db } from './firebase-init.js';
-import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// js/applications.js
+import { auth, db } from "./firebase-init.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-const applicationsList = document.getElementById('applications-list');
-const searchInput = document.getElementById('searchInput');
-const jobFilter = document.getElementById('jobFilter');
+const applicationsList = document.getElementById("applications-list");
+const searchInput = document.getElementById("searchInput");
+const jobFilter = document.getElementById("jobFilter");
 
-// Store jobs in memory to avoid multiple calls
-const jobsMap = new Map();
+// Ensure user is logged in
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = "login.html";
+  else loadApplications();
+});
 
-// Load all jobs to populate filter dropdown and map
-async function loadJobsForFilter() {
-  const jobsSnapshot = await getDocs(collection(db, 'jobs'));
-  jobsSnapshot.forEach(docSnap => {
-    const jobData = docSnap.data();
-    jobsMap.set(docSnap.id, jobData.title);
+async function loadApplications() {
+  applicationsList.innerHTML = "<p>Loading applications...</p>";
 
-    const option = document.createElement('option');
-    option.value = docSnap.id;
-    option.textContent = jobData.title;
-    jobFilter.appendChild(option);
-  });
-}
+  try {
+    const appsSnapshot = await getDocs(collection(db, "applications"));
+    const apps = appsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-// Load all applications
-async function loadApplications(filterJobId = '', searchKeyword = '') {
-  applicationsList.innerHTML = `<p class="loading">Loading applications...</p>`;
-
-  const appsSnapshot = await getDocs(collection(db, 'applications'));
-  const applications = [];
-
-  appsSnapshot.forEach(docSnap => {
-    const app = { id: docSnap.id, ...docSnap.data() };
-    if (
-      (!filterJobId || app.jobId === filterJobId) &&
-      (!searchKeyword ||
-        app.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        app.email.toLowerCase().includes(searchKeyword.toLowerCase()))
-    ) {
-      applications.push(app);
+    if (apps.length === 0) {
+      applicationsList.innerHTML = "<p>No applications found.</p>";
+      return;
     }
-  });
 
-  renderApplications(applications);
-}
+    displayApplications(apps);
 
-// Render applications
-function renderApplications(applications) {
-  if (applications.length === 0) {
-    applicationsList.innerHTML = `<p class="empty">No applications found.</p>`;
-    return;
+    // Filter functionality
+    searchInput.addEventListener("input", () => filterApps(apps));
+    jobFilter.addEventListener("change", () => filterApps(apps));
+
+    // Populate job filter dynamically
+    const jobs = [...new Set(apps.map(a => a.jobTitle))];
+    jobs.forEach(job => {
+      const option = document.createElement("option");
+      option.value = job;
+      option.textContent = job;
+      jobFilter.appendChild(option);
+    });
+
+  } catch (err) {
+    console.error(err);
+    applicationsList.innerHTML = "<p>Error loading applications.</p>";
   }
+}
 
-  applicationsList.innerHTML = '';
-  applications.forEach(app => {
-    const jobTitle = jobsMap.get(app.jobId) || "Unknown Job";
-
-    const appEl = document.createElement('div');
-    appEl.classList.add('application-card');
-    appEl.innerHTML = `
+function displayApplications(apps) {
+  applicationsList.innerHTML = "";
+  apps.forEach(app => {
+    const div = document.createElement("div");
+    div.classList.add("application-card");
+    div.innerHTML = `
       <h3>${app.name}</h3>
-      <p>Email: ${app.email}</p>
-      <p>Message: ${app.message}</p>
-      <p>Job: ${jobTitle}</p>
+      <p><strong>Email:</strong> ${app.email}</p>
+      <p><strong>Job:</strong> ${app.jobTitle}</p>
+      <p><strong>Message:</strong> ${app.message}</p>
     `;
-    applicationsList.appendChild(appEl);
+    applicationsList.appendChild(div);
   });
 }
 
-// Filter and search events
-searchInput.addEventListener('input', () => {
-  loadApplications(jobFilter.value, searchInput.value);
-});
+function filterApps(apps) {
+  const keyword = searchInput.value.toLowerCase();
+  const job = jobFilter.value;
 
-jobFilter.addEventListener('change', () => {
-  loadApplications(jobFilter.value, searchInput.value);
-});
+  const filtered = apps.filter(app => {
+    const matchesKeyword = app.name.toLowerCase().includes(keyword) || app.email.toLowerCase().includes(keyword);
+    const matchesJob = job === "" || app.jobTitle === job;
+    return matchesKeyword && matchesJob;
+  });
 
-// Initialize
-loadJobsForFilter().then(() => loadApplications());
+  displayApplications(filtered);
+}

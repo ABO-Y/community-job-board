@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Job Details</title>
-  <link rel="stylesheet" href="../css/main.css" />
-  <script type="module" defer src="js/job-details.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
   <header>
@@ -20,30 +19,26 @@
   </header>
 
   <main class="container">
-    <section id="job-details" class="job-details-section">
-      <h2>Job Details</h2>
+    <section id="job-details" aria-labelledby="job-details-title">
+      <h2 id="job-details-title">Job Details</h2>
       <div id="job-details-content" aria-live="polite">
         <p class="loading" hidden>Loading job details...</p>
         <p class="empty" hidden>No job details available.</p>
       </div>
     </section>
 
-    <section id="application-section" class="apply-section">
-      <h2>Apply for this Job</h2>
-      <form id="application-form">
-        <label for="applicant-name">Full Name</label>
-        <input type="text" id="applicant-name" name="name" required placeholder="Your full name" />
-
-        <label for="applicant-email">Email</label>
-        <input type="email" id="applicant-email" name="email" required placeholder="you@example.com" />
-
-        <label for="applicant-message">Cover Letter</label>
-        <textarea id="applicant-message" name="message" rows="6" required placeholder="Tell us why you're a great fit..."></textarea>
-
+    <section id="application-section" aria-labelledby="apply-title">
+      <h2 id="apply-title">Apply for this Job</h2>
+      <form id="application-form" autocomplete="on" novalidate>
+        <input type="text" id="applicant-name" required placeholder="Full Name">
+        <input type="email" id="applicant-email" required placeholder="Email">
+        <textarea id="applicant-message" rows="6" required placeholder="Cover Letter"></textarea>
         <button type="submit">Submit Application</button>
       </form>
-      <p id="application-status" aria-live="polite" hidden></p>
+      <p id="application-status" aria-live="polite"></p>
     </section>
   </main>
+
+  <script type="module" src="js/job-details.js"></script>
 </body>
 </html>

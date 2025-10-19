@@ -1,55 +1,51 @@
-import { db } from './firebase-init.js';
-import { collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// js/jobs.js
+import { db } from "./firebase-init.js";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-const jobsContainer = document.getElementById('jobs-container');
-const keywordInput = document.getElementById('keyword');
-const categorySelect = document.getElementById('category');
-const searchBtn = document.getElementById('search-btn');
+const jobsContainer = document.getElementById("jobs-container");
+const searchBtn = document.getElementById("search-btn");
+const keywordInput = document.getElementById("keyword");
+const categorySelect = document.getElementById("category");
 
-async function loadJobs(filterKeyword = '', filterCategory = '') {
-  jobsContainer.innerHTML = `<p class="loading">Loading jobs...</p>`;
+async function loadJobs(keyword = "", category = "") {
+  jobsContainer.innerHTML = "";
+  const jobsCol = collection(db, "jobs");
 
-  let q = collection(db, 'jobs');
-
-  if (filterCategory) {
-    q = query(q, where('category', '==', filterCategory));
+  let q;
+  if (category) {
+    q = query(jobsCol, where("category", "==", category));
+  } else {
+    q = jobsCol;
   }
 
-  const querySnapshot = await getDocs(q);
+  const snapshot = await getDocs(q);
+  const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-  const jobs = [];
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    if (!filterKeyword || data.title.toLowerCase().includes(filterKeyword.toLowerCase())) {
-      jobs.push({ id: doc.id, ...data });
-    }
-  });
+  let filteredJobs = jobs;
+  if (keyword) {
+    filteredJobs = jobs.filter(job =>
+      job.title.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }
 
-  renderJobs(jobs);
-}
-
-function renderJobs(jobs) {
-  if (jobs.length === 0) {
-    jobsContainer.innerHTML = `<p class="empty">No jobs found.</p>`;
+  if (filteredJobs.length === 0) {
+    jobsContainer.innerHTML = "<p>No jobs found.</p>";
     return;
   }
 
-  jobsContainer.innerHTML = '';
-  jobs.forEach(job => {
-    const jobEl = document.createElement('div');
-    jobEl.classList.add('job-card');
+  filteredJobs.forEach(job => {
+    const jobEl = document.createElement("div");
+    jobEl.className = "job-card";
     jobEl.innerHTML = `
       <h3>${job.title}</h3>
-      <p>Category: ${job.category}</p>
-      <p>${job.description.substring(0, 100)}...</p>
+      <p>${job.company || ""}</p>
       <a href="job-details.html?id=${job.id}" class="btn">View Details</a>
     `;
     jobsContainer.appendChild(jobEl);
   });
 }
 
-// Event listeners
-searchBtn.addEventListener('click', () => {
+searchBtn.addEventListener("click", () => {
   const keyword = keywordInput.value.trim();
   const category = categorySelect.value;
   loadJobs(keyword, category);

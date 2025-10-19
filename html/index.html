@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Community Job Board</title>
   <link rel="stylesheet" href="../css/main.css" />
-  <!-- If you rely on jQuery for legacy code, keep it; otherwise consider vanilla JS -->
-  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
   <header role="banner" class="site-header">
@@ -33,11 +31,9 @@
     <p>&copy; 2025 Community Job Board</p>
   </footer>
 
-  <!-- Floating Dark Mode Toggle -->
   <button id="darkModeToggle" class="floating-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
 
-  <!-- Core scripts -->
-  <script defer src="firebase-init.js"></script> <!-- Move Firebase init to its own file for clarity -->
-  <script defer src="dark-mode.js"></script>      <!-- Separate dark mode logic -->
+  <script type="module" src="js/firebase-init.js"></script>
+  <script src="js/dark-mode.js" defer></script>
 </body>
 </html>

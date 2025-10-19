@@ -1,54 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Job Listings</title>
-  <link rel="stylesheet" href="../css/main.css" />
-  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-  <header role="banner">
+  <header>
     <nav class="navbar" aria-label="Main navigation">
       <h1 class="brand">Community Job Board</h1>
       <ul class="nav-list">
-        <li><a href="index.html" aria-label="Home">Home</a></li>
-        <li><a href="jobs.html" aria-label="Jobs">Jobs</a></li>
-        <li><a href="post-job.html" aria-label="Post Job">Post Job</a></li>
-        <li><a href="login.html" aria-label="Login">Login</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="jobs.html">Jobs</a></li>
+        <li><a href="post-job.html">Post Job</a></li>
+        <li><a href="login.html">Login</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container" role="main" aria-label="Job Listings Main Content">
-    <!-- Filter bar -->
+  <main class="container" role="main">
     <section class="filter-bar" aria-labelledby="filter-title">
       <h2 id="filter-title" class="sr-only">Job Filters</h2>
-      <label for="keyword" class="sr-only">Search keyword</label>
-      <input type="text" id="keyword" placeholder="Search by keyword" aria-label="Search by keyword" />
-      
-      <label for="category" class="sr-only">Category</label>
-      <select id="category" aria-label="Filter by category">
+      <input type="text" id="keyword" placeholder="Search by keyword">
+      <select id="category">
         <option value="">All Categories</option>
         <option value="IT">IT</option>
         <option value="Education">Education</option>
         <option value="Retail">Retail</option>
       </select>
-
-      <button id="search-btn" type="button" aria-label="Search jobs">Search</button>
+      <button id="search-btn">Search</button>
     </section>
 
-    <!-- Job list -->
-    <section id="job-list" class="job-list" aria-labelledby="job-list-title" role="region" aria-label="Job Listings">
-      <h2 id="job-list-title" class="sr-only">Job Listings</h2>
-      <div id="jobs-container" class="jobs-grid" aria-live="polite">
-        <!-- Jobs loaded dynamically -->
+    <section id="job-list" role="region" aria-label="Job Listings">
+      <div id="jobs-container" aria-live="polite">
         <p class="loading" hidden>Loading jobs...</p>
         <p class="empty" hidden>No jobs found.</p>
       </div>
     </section>
   </main>
 
-  <script src="js/jobs.js" defer></script>
+  <script type="module" src="js/jobs.js"></script>
 </body>
 </html>

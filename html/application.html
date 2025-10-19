@@ -15,17 +15,34 @@
         <li><a href="dashboard.html">My Jobs</a></li>
         <li><a href="post-job.html">Post Job</a></li>
         <li><a href="applications.html" class="active">Applications</a></li>
-        <li><button id="logout">Logout</button></li>
+        <li><a href="index.html">Logout</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container">
-    <h2>Applications</h2>
-    <div id="applications-list" aria-live="polite">
-      <p class="loading">Loading applications...</p>
-      <p class="empty" hidden>No applications found.</p>
-    </div>
+  <main class="container" role="main">
+    <section class="applications-section" aria-labelledby="applications-title">
+      <h2 id="applications-title">Job Applications</h2>
+
+      <!-- Filter Controls -->
+      <form class="filter-bar" id="filter-form" onsubmit="return false;" aria-label="Filter applications">
+        <label class="visually-hidden" for="searchInput">Search applicants</label>
+        <input type="text" id="searchInput" placeholder="Search by applicant name or email..." autocomplete="off" />
+
+        <label class="visually-hidden" for="jobFilter">Filter by job</label>
+        <select id="jobFilter">
+          <option value="">All Job Titles</option>
+          <!-- JS will populate job titles -->
+        </select>
+      </form>
+
+      <!-- Applications List -->
+      <div id="applications-list" role="region" aria-label="Applications list">
+        <p class="loading" aria-live="polite">Loading applications...</p>
+        <p class="empty" aria-live="polite" hidden>No applications found.</p>
+        <!-- Applications will be injected here by JS -->
+      </div>
+    </section>
   </main>
 </body>
 </html>

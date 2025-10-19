@@ -1,67 +1,64 @@
-import { db, auth } from './firebase-init.js';
-import { doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// js/job-details.js
+import { db, auth } from "./firebase-init.js";
+import { collection, addDoc, getDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// Get job ID from URL
-const urlParams = new URLSearchParams(window.location.search);
-const jobId = urlParams.get('id');
+const form = document.getElementById("application-form");
+const status = document.getElementById("application-status");
 
-const jobContent = document.getElementById('job-details-content');
-const applicationForm = document.getElementById('application-form');
-const applicationStatus = document.getElementById('application-status');
-
-// Load job details
+// Load job details dynamically based on URL param ?id=
 async function loadJob() {
-  if (!jobId) {
-    jobContent.innerHTML = `<p class="empty">Job not found.</p>`;
+  const params = new URLSearchParams(window.location.search);
+  const jobId = params.get("id");
+  if (!jobId) return;
+
+  const jobDoc = await getDoc(doc(db, "jobs", jobId));
+  const job = jobDoc.data();
+  if (!job) {
+    document.getElementById("job-details-content").textContent = "Job not found.";
     return;
   }
 
-  const docRef = doc(db, 'jobs', jobId);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    const job = docSnap.data();
-    jobContent.innerHTML = `
-      <h3>${job.title}</h3>
-      <p>Category: ${job.category}</p>
-      <p>${job.description}</p>
-    `;
-  } else {
-    jobContent.innerHTML = `<p class="empty">Job not found.</p>`;
-  }
+  document.getElementById("job-details-content").innerHTML = `
+    <h3>${job.title}</h3>
+    <p>${job.description}</p>
+    <p><strong>Category:</strong> ${job.category}</p>
+  `;
 }
 
-// Handle application form submission
-applicationForm.addEventListener('submit', async (e) => {
+// Submit application
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const params = new URLSearchParams(window.location.search);
+  const jobId = params.get("id");
+  if (!jobId) return;
 
-  const name = applicationForm['name'].value.trim();
-  const email = applicationForm['email'].value.trim();
-  const message = applicationForm['message'].value.trim();
+  const name = form["name"].value.trim();
+  const email = form["email"].value.trim();
+  const message = form["message"].value.trim();
 
   if (!name || !email || !message) {
-    applicationStatus.textContent = 'All fields are required.';
-    applicationStatus.hidden = false;
+    status.textContent = "Please fill in all fields.";
+    status.hidden = false;
     return;
   }
 
   try {
-    await addDoc(collection(db, 'applications'), {
+    await addDoc(collection(db, "applications"), {
       jobId,
+      jobTitle: document.querySelector("#job-details-content h3").textContent,
       name,
       email,
       message,
-      appliedAt: serverTimestamp()
+      appliedAt: new Date()
     });
-
-    applicationStatus.textContent = 'Application submitted successfully!';
-    applicationStatus.hidden = false;
-    applicationForm.reset();
-  } catch (error) {
-    console.error(error);
-    applicationStatus.textContent = 'Failed to submit application. Try again.';
-    applicationStatus.hidden = false;
+    status.textContent = "Application submitted!";
+    status.hidden = false;
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Error submitting application.";
+    status.hidden = false;
   }
 });
 
-loadJob();
+window.addEventListener("DOMContentLoaded", loadJob);

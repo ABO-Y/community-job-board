@@ -1,16 +1,32 @@
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+// js/login.js
+import { auth } from "./firebase-init.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+const loginForm = document.getElementById("login-form");
+const status = document.getElementById("login-status");
+
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
+  const email = loginForm["email"].value.trim();
+  const password = loginForm["password"].value;
+
+  if (!email || !password) {
+    status.textContent = "Please enter email and password.";
+    status.hidden = false;
+    return;
+  }
 
   try {
-    // Firebase Authentication
-    await auth.signInWithEmailAndPassword(email, password);
-    // Redirect on success
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    // Show friendly message
-    alert("Login failed: " + error.message);
+    await signInWithEmailAndPassword(auth, email, password);
+    status.textContent = "Login successful! Redirecting...";
+    status.hidden = false;
+    setTimeout(() => {
+      window.location.href = "dashboard.html"; // redirect to dashboard after login
+    }, 1000);
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Invalid email or password.";
+    status.hidden = false;
   }
 });

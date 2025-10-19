@@ -1,52 +1,45 @@
-import { auth, db } from './firebase-init.js';
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// js/post-job.js
+import { auth, db } from "./firebase-init.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-const form = document.getElementById('post-job-form');
-const status = document.getElementById('status');
-const logoutBtn = document.getElementById('logout');
+const postForm = document.getElementById("post-job-form");
+const status = document.getElementById("post-job-status");
 
-// Ensure only logged-in users can post jobs
-auth.onAuthStateChanged((user) => {
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
-  }
+// Ensure user is logged in
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = "login.html";
 });
 
-// Handle form submission
-form.addEventListener('submit', async (e) => {
+postForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const title = form['title'].value.trim();
-  const description = form['description'].value.trim();
-  const category = form['category'].value;
+  const title = postForm["title"].value.trim();
+  const description = postForm["description"].value.trim();
+  const category = postForm["category"].value;
 
   if (!title || !description || !category) {
-    status.textContent = 'All fields are required.';
+    status.textContent = "Please fill in all fields.";
     status.hidden = false;
     return;
   }
 
   try {
-    await addDoc(collection(db, 'jobs'), {
+    await addDoc(collection(db, "jobs"), {
       title,
       description,
       category,
-      userId: auth.currentUser.uid,
-      createdAt: serverTimestamp()
+      status: "pending",
+      postedAt: new Date()
     });
 
-    status.textContent = 'Job posted successfully!';
+    status.textContent = "Job posted successfully! Awaiting approval.";
     status.hidden = false;
+    postForm.reset();
 
-    // Reset the form
-    form.reset();
-  } catch (error) {
-    console.error('Error posting job:', error);
-    status.textContent = 'Failed to post job. Please try again.';
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Error posting job.";
     status.hidden = false;
   }
 });
-
-// Logout
-logoutBtn.addEventListener('click', () => auth.signOut().then(() => window.location.href = 'login.html'));

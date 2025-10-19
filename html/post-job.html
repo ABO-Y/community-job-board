@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Post a Job</title>
+  <title>Post Job</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script type="module" defer src="js/post-job.js"></script>
 </head>
@@ -12,41 +12,46 @@
     <nav class="navbar" aria-label="Main navigation">
       <h1 class="logo">Employer Dashboard</h1>
       <ul class="nav-list">
-        <li><a href="dashboard.html">My Jobs</a></li>
-        <li><a href="post-job.html" class="active">Post Job</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
         <li><a href="applications.html">Applications</a></li>
-        <li><button id="logout">Logout</button></li>
+        <li><a href="index.html">Logout</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container">
-    <h2>Post a New Job</h2>
-    <form id="post-job-form" autocomplete="on">
-      <div class="form-group">
-        <label for="job-title">Job Title</label>
-        <input type="text" id="job-title" name="title" required placeholder="Enter job title">
-      </div>
+  <main class="container" role="main">
+    <section class="post-job-section" aria-labelledby="post-job-title">
+      <h2 id="post-job-title">Post a New Job</h2>
+      <form id="post-job-form">
+        <div class="form-group">
+          <label for="title">Job Title</label>
+          <input type="text" id="title" name="title" required placeholder="Enter job title" />
+        </div>
 
-      <div class="form-group">
-        <label for="job-description">Description</label>
-        <textarea id="job-description" name="description" rows="6" required placeholder="Enter job description"></textarea>
-      </div>
+        <div class="form-group">
+          <label for="company">Company Name</label>
+          <input type="text" id="company" name="company" required placeholder="Enter company name" />
+        </div>
 
-      <div class="form-group">
-        <label for="job-category">Category</label>
-        <select id="job-category" name="category" required>
-          <option value="">Select Category</option>
-          <option value="IT">IT</option>
-          <option value="Education">Education</option>
-          <option value="Retail">Retail</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="">Select category</option>
+            <option value="IT">IT</option>
+            <option value="Education">Education</option>
+            <option value="Retail">Retail</option>
+          </select>
+        </div>
 
-      <button type="submit" class="btn">Post Job</button>
-    </form>
+        <div class="form-group">
+          <label for="description">Job Description</label>
+          <textarea id="description" name="description" rows="6" required placeholder="Enter job description"></textarea>
+        </div>
 
-    <p id="status" aria-live="polite" hidden></p>
+        <button type="submit" class="btn">Post Job</button>
+      </form>
+      <p id="status-message" class="status" hidden></p>
+    </section>
   </main>
 </body>
 </html>

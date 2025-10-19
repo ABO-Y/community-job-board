@@ -4,41 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard</title>
-
-  <!-- Main stylesheet -->
   <link rel="stylesheet" href="../css/main.css" />
-
-  <!-- Optional: If you still need jQuery for legacy code, keep it. Otherwise, consider vanilla JS. -->
-  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJ4w2Q6q4ZCkxzgv2Fq9G6V1+5p4YfRvZ9QnM=" crossorigin="anonymous"></script>
+  <script type="module" defer src="js/admin.js"></script>
 </head>
 <body>
   <header>
-    <!-- Use a nav landmark for accessibility -->
     <nav class="navbar" aria-label="Main navigation">
       <h1 class="logo">Admin Dashboard</h1>
       <ul class="nav-list">
         <li><a href="index.html">Home</a></li>
-        <li><a href="dashboard.html" aria-label="Employer Dashboard">Employer Dashboard</a></li>
-        <!-- Logout should ideally be a button to prevent accidental navigation -->
-        <li><button id="logout" class="logout-btn" aria-label="Logout">Logout</button></li>
+        <li><a href="dashboard.html">Employer Dashboard</a></li>
+        <li><a href="login.html">Logout</a></li>
       </ul>
     </nav>
   </header>
 
-  <!-- Main content area -->
-  <main id="content" class="container" role="main">
+  <main class="container" role="main">
     <section class="job-section" aria-labelledby="pending-label">
       <h2 id="pending-label">Pending Job Approvals</h2>
-      <div id="pending-jobs" class="job-grid" aria-live="polite"></div>
+      <div id="pending-jobs" class="job-grid" aria-live="polite">
+        <!-- JS injects pending jobs here -->
+      </div>
     </section>
 
     <section class="job-section" aria-labelledby="approved-label">
       <h2 id="approved-label">Approved Jobs</h2>
-      <div id="approved-jobs" class="job-grid" aria-live="polite"></div>
+      <div id="approved-jobs" class="job-grid" aria-live="polite">
+        <!-- JS injects approved jobs here -->
+      </div>
     </section>
   </main>
-
-  <!-- Place scripts at the end; defer if possible -->
-  <script src="js/admin.js" defer></script>
 </body>
 </html>

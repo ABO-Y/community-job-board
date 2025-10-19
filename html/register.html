@@ -1,39 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="stylesheet" href="../css/main.css" />
-  <script type="module" defer src="js/register.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-  <header>
-    <nav class="navbar" aria-label="Main navigation">
-      <h1 class="brand">Community Job Board</h1>
-      <ul class="nav-list">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="login.html">Login</a></li>
-      </ul>
-    </nav>
-  </header>
-
   <main class="container">
-    <h2>Register</h2>
-    <form id="register-form">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" placeholder="Your full name" required>
-
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="you@example.com" required>
-
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Password" required>
-
-      <button type="submit">Register</button>
-    </form>
-    <p id="register-status" aria-live="polite"></p>
-    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <section aria-labelledby="registerTitle">
+      <h2 id="registerTitle">Register</h2>
+      <form id="register-form" autocomplete="on" novalidate>
+        <div class="form-group">
+          <label for="register-name">Full Name</label>
+          <input type="text" id="register-name" required placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" required placeholder="Password">
+        </div>
+        <button type="submit" class="btn">Register</button>
+      </form>
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+      <p id="register-status" aria-live="polite"></p>
+    </section>
   </main>
+
+  <script type="module" src="js/register.js"></script>
 </body>
 </html>
