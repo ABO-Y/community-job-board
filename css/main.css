@@ -24,6 +24,12 @@
   --shadow-lg: 0 32px 64px rgba(11, 37, 69, 0.12);
   --gradient: linear-gradient(135deg, var(--brand), var(--brand-2));
   --gradient-subtle: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  --primary-blue: #1e3c72;
+  --accent-blue: #2a5298;
+  --light-blue: #e6f0ff;
+  --hover-blue: #3b6cb7;
+  --text-dark: #1a1a1a;
+
 }
 
 /* Reset & Base */
@@ -44,6 +50,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+h1, h2 {
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .container {
@@ -594,6 +607,19 @@ header {
   backdrop-filter: blur(10px);
 }
 
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+
 input, select, textarea {
   width: 100%;
   padding: 1rem 1.25rem;
@@ -695,6 +721,16 @@ footer {
   overflow: hidden;
 }
 
+.forgot-link {
+  color: #2a5298;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+.forgot-link:hover {
+  color: #3b6cb7;
+}
+
+
 footer::before {
   content: '';
   position: absolute;
@@ -745,6 +781,19 @@ footer a:hover {
   .container {
     width: 94%;
   }
+
+   
+@media (max-width: 768px) {
+  .nav, .hero, .footer {
+    flex-direction: column;
+    text-align: center;
+  }
+  .card {
+    margin: 1rem 0;
+  }
+}
+
+   
   
   .main-links {
     display: none;

@@ -28,3 +28,5 @@ try {
 // Export for other JS files
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+
