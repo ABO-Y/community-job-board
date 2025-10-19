@@ -5,40 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>View Applications</title>
   <link rel="stylesheet" href="../css/main.css" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- If you still rely on jQuery for legacy code, keep it; otherwise consider vanilla JS. -->
+  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
   <header>
-    <nav class="navbar">
-      <h1>Employer Dashboard</h1>
-      <ul>
-        <li><a href="dashboard.html">My Jobs</a></li>
-        <li><a href="post-job.html">Post Job</a></li>
-        <li><a href="applications.html" class="active">Applications</a></li>
-        <li><a href="index.html">Logout</a></li>
+    <nav class="navbar" aria-label="Main navigation">
+      <h1 class="logo">Employer Dashboard</h1>
+      <ul class="nav-list">
+        <li><a href="dashboard.html" aria-label="My Jobs">My Jobs</a></li>
+        <li><a href="post-job.html" aria-label="Post Job">Post Job</a></li>
+        <li><a href="applications.html" class="active" aria-label="Applications">Applications</a></li>
+        <li><a href="index.html" aria-label="Logout">Logout</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container">
-    <section class="applications-section">
-      <h2>Job Applications</h2>
+  <main id="content" class="container" role="main">
+    <section class="applications-section" aria-labelledby="applications-title">
+      <h2 id="applications-title">Job Applications</h2>
 
       <!-- Filter Controls -->
-      <div class="filter-bar">
-        <input type="text" id="searchInput" placeholder="Search by applicant name or email..." />
-        <select id="jobFilter">
+      <form class="filter-bar" onsubmit="return false;" aria-label="Filter applications">
+        <label class="visually-hidden" for="searchInput">Search applicants</label>
+        <input type="text" id="searchInput" placeholder="Search by applicant name or email..." autocomplete="off" aria-label="Search applicants" />
+
+        <label class="visually-hidden" for="jobFilter">Filter by job</label>
+        <select id="jobFilter" aria-label="Filter by job title">
           <option value="">All Job Titles</option>
         </select>
-      </div>
+      </form>
 
       <!-- Applications List -->
-      <div id="applications-list">
+      <div id="applications-list" role="region" aria-label="Applications list">
         <!-- Applications loaded dynamically -->
+        <p class="loading" aria-live="polite" hidden>Loading applications...</p>
+        <p class="empty" aria-live="polite" hidden>No applications found.</p>
+        <!-- Items will be injected here -->
       </div>
     </section>
   </main>
 
-  <script src="js/applications.js"></script>
+  <!-- Scripts at end for non-critical path; defer if possible -->
+  <script src="js/applications.js" defer></script>
 </body>
 </html>

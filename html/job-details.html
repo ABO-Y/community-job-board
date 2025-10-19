@@ -5,42 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Job Details</title>
   <link rel="stylesheet" href="../css/main.css" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-      <h1>Community Job Board</h1>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="jobs.html">Browse Jobs</a></li>
-        <li><a href="login.html">Login</a></li>
+  <header role="banner">
+    <nav class="navbar" aria-label="Main navigation">
+      <h1 class="brand">Community Job Board</h1>
+      <ul class="nav-list">
+        <li><a href="index.html" aria-label="Home">Home</a></li>
+        <li><a href="jobs.html" aria-label="Browse Jobs">Browse Jobs</a></li>
+        <li><a href="login.html" aria-label="Login">Login</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container">
-    <section id="job-details">
-      <!-- Job details loaded here -->
+  <main class="container" role="main">
+    <!-- Job Details Section -->
+    <section id="job-details" aria-labelledby="job-details-title" class="job-details-section">
+      <h2 id="job-details-title">Job Details</h2>
+      <div id="job-details-content" class="job-details-content" aria-live="polite">
+        <!-- Job details loaded here -->
+        <p class="loading" aria-live="polite" hidden>Loading job details...</p>
+        <p class="empty" hidden>No job details available.</p>
+      </div>
     </section>
 
-    <section id="application-section" class="apply-section">
-      <h2>Apply for this Job</h2>
-      <form id="application-form">
-        <label>Full Name</label>
-        <input type="text" id="applicant-name" required />
+    <!-- Application Section -->
+    <section id="application-section" class="apply-section" aria-labelledby="apply-title">
+      <h2 id="apply-title">Apply for this Job</h2>
+      <form id="application-form" autocomplete="on" novalidate>
+        <div class="form-group">
+          <label for="applicant-name">Full Name</label>
+          <input type="text" id="applicant-name" name="name" required placeholder="Your full name" />
+        </div>
 
-        <label>Email</label>
-        <input type="email" id="applicant-email" required />
+        <div class="form-group">
+          <label for="applicant-email">Email</label>
+          <input type="email" id="applicant-email" name="email" required placeholder="you@example.com" />
+        </div>
 
-        <label>Cover Letter</label>
-        <textarea id="applicant-message" rows="4" required></textarea>
+        <div class="form-group">
+          <label for="applicant-message">Cover Letter</label>
+          <textarea id="applicant-message" name="message" rows="6" required placeholder="Tell us why you're a great fit..."></textarea>
+        </div>
 
-        <button type="submit">Submit Application</button>
+        <button type="submit" class="btn">Submit Application</button>
       </form>
+
+      <p id="application-status" class="status" aria-live="polite" hidden></p>
     </section>
   </main>
 
-  <script src="js/job-details.js"></script>
+  <footer role="contentinfo" class="site-footer">
+    <p>&copy; 2025 Community Job Board</p>
+  </footer>
+
+  <!-- Optional: put scripts at end or defer -->
+  <script src="js/job-details.js" defer></script>
 </body>
 </html>

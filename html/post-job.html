@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Post a Job</title>
-  <link rel="stylesheet" href="../css/main.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-      <h1>Post a Job</h1>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="jobs.html">Jobs</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
+  <header role="banner" class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <h1 class="brand">Post a Job</h1>
+      <ul class="nav-list">
+        <li><a href="index.html" aria-label="Home">Home</a></li>
+        <li><a href="jobs.html" aria-label="Jobs">Jobs</a></li>
+        <li><a href="dashboard.html" aria-label="Dashboard">Dashboard</a></li>
       </ul>
     </nav>
   </header>
 
-  <section class="form-section">
-    <form id="postJobForm">
-      <input type="text" id="title" placeholder="Job Title" required>
-      <input type="text" id="location" placeholder="Location" required>
-      <select id="category" required>
-        <option value="">Select Category</option>
-        <option>IT</option>
-        <option>Education</option>
-        <option>Retail</option>
-      </select>
-      <textarea id="description" placeholder="Job Description" required></textarea>
-      <button type="submit">Post Job</button>
-    </form>
-  </section>
+  <main class="container" role="main" aria-label="Post a new job">
+    <section class="form-section" aria-labelledby="post-job-title">
+      <h2 id="post-job-title" class="sr-only">Post a Job</h2>
+      <form id="postJobForm" autocomplete="on" novalidate>
+        <div class="form-group">
+          <label for="title">Job Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g., Front-end Developer" required />
+        </div>
 
-  <script src="js/dashboard.js"></script>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" placeholder="City or region" required />
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="" disabled selected>Select Category</option>
+            <option value="IT">IT</option>
+            <option value="Education">Education</option>
+            <option value="Retail">Retail</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Job Description</label>
+          <textarea id="description" name="description" rows="6" placeholder="Describe the role, requirements, and benefits" required></textarea>
+        </div>
+
+        <button type="submit" class="btn" aria-label="Post Job">Post Job</button>
+
+        <div id="post-status" class="status" role="status" aria-live="polite" hidden></div>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/dashboard.js" defer></script>
 </body>
 </html>

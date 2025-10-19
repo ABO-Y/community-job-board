@@ -1,94 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard - Community Job Board</title>
-  <link rel="stylesheet" href="../css/main.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="../css/main.css" />
+  <!-- Keep if you rely on jQuery; otherwise consider vanilla JS -->
+  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-<header>
-  <h1>Community Job Board</h1>
-  <button id="logoutBtn" class="dark-mode-toggle">Logout</button>
+<header role="banner" class="site-header">
+  <nav aria-label="Main navigation" class="navbar">
+    <h1 class="logo">Community Job Board</h1>
+    <ul class="nav-list">
+      <li><a href="dashboard.html" aria-label="Dashboard Home">Dashboard</a></li>
+      <li><a href="post-job.html" aria-label="Post a Job">Post Job</a></li>
+      <li><a href="applications.html" aria-label="Applications" class="active">Applications</a></li>
+      <li><button id="logoutBtn" class="logout-btn" aria-label="Logout">Logout</button></li>
+    </ul>
+  </nav>
 </header>
 
-<main class="container">
-  <h2 id="welcomeMsg">Welcome!</h2>
+<main class="container" role="main">
+  <section aria-labelledby="welcomeMsg" class="intro-section">
+    <h2 id="welcomeMsg" class="sr-only">Welcome</h2>
+    <p>Welcome to your employer dashboard. You can view job listings, manage applications, or update your profile.</p>
+  </section>
 
-  <p>This is your dashboard. You can view job listings, apply for jobs, or manage your profile.</p>
-
-  <!-- Example: Job Listings -->
-  <section class="job-listings" id="jobListings">
-    <!-- Jobs will be dynamically inserted here -->
+  <!-- Job Listings -->
+  <section class="job-listings" id="jobListings" aria-labelledby="jobListingsTitle">
+    <h2 id="jobListingsTitle">Job Listings</h2>
+    <div id="jobListingsContainer" class="grid">
+      <!-- Jobs will be dynamically inserted here -->
+    </div>
   </section>
 </main>
 
 <!-- Floating Dark Mode Toggle -->
-<button id="darkModeToggle" title="Toggle dark mode">🌙</button>
+<button id="darkModeToggle" class="floating-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
 
-<script src="../js/auth.js"></script>
+<script src="../js/auth.js" defer></script>
 <script>
-// ---------------------------
-// Dashboard Logic
-// ---------------------------
+  // ---------------------------
+  // Dashboard Logic
+  // ---------------------------
 
-// Check if user is logged in
-const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-if (!currentUser) {
-  alert("Please login first!");
-  window.location.href = "login.html";
-} else {
-  document.getElementById("welcomeMsg").textContent = `Welcome, ${currentUser.name}!`;
-}
+  // Initialize on DOMContentLoaded to ensure elements exist
+  document.addEventListener("DOMContentLoaded", () => {
+    // Check if user is logged in
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser) {
+      alert("Please login first!");
+      window.location.href = "login.html";
+      return;
+    }
 
-// Logout button
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("currentUser");
-  alert("You have been logged out.");
-  window.location.href = "login.html";
-});
+    // Update welcome message if available
+    const welcomeEl = document.getElementById("welcomeMsg");
+    if (welcomeEl && currentUser.name) {
+      welcomeEl.textContent = `Welcome, ${currentUser.name}!`;
+    }
 
-// Example: Display some dummy job listings
-const jobs = [
-  { title: "Front-end Developer", company: "Local Startup", location: "Windhoek", status: "Open" },
-  { title: "Volunteer Coordinator", company: "NGO Namibia", location: "Swakopmund", status: "Open" },
-  { title: "Cashier", company: "Local Shop", location: "Windhoek", status: "Closed" }
-];
+    // Logout button
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("currentUser");
+        alert("You have been logged out.");
+        window.location.href = "login.html";
+      });
+    }
 
-const jobContainer = document.getElementById("jobListings");
-jobs.forEach(job => {
-  const jobCard = document.createElement("div");
-  jobCard.className = "job-card";
-  jobCard.innerHTML = `
-    <h3>${job.title}</h3>
-    <p><strong>Company:</strong> ${job.company}</p>
-    <p><strong>Location:</strong> ${job.location}</p>
-    <p><strong>Status:</strong> ${job.status}</p>
-    <button>Apply</button>
-  `;
-  jobContainer.appendChild(jobCard);
-});
+    // Load or render jobs (replace with real fetch in production)
+    renderJobs(mockJobs);
 
-// ---------------------------
-// Dark Mode Floating Toggle
-// ---------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleBtn = document.getElementById("darkModeToggle");
+    // Dark Mode
+    setupDarkMode();
+  });
 
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-    toggleBtn.textContent = "☀️";
+  // Dummy data (replace with real API call)
+  const mockJobs = [
+    { title: "Front-end Developer", company: "Local Startup", location: "Windhoek", status: "Open" },
+    { title: "Volunteer Coordinator", company: "NGO Namibia", location: "Swakopmund", status: "Open" },
+    { title: "Cashier", company: "Local Shop", location: "Windhoek", status: "Closed" }
+  ];
+
+  function renderJobs(jobs) {
+    const container = document.getElementById("jobListingsContainer");
+    if (!container) return;
+
+    container.innerHTML = ""; // reset
+
+    if (!jobs || jobs.length === 0) {
+      container.innerHTML = `<p class="empty" aria-live="polite">No jobs available at the moment.</p>`;
+      return;
+    }
+
+    jobs.forEach(job => {
+      const card = document.createElement("article");
+      card.className = "job-card";
+      card.setAttribute("aria-label", `${job.title} at ${job.company}`);
+      card.innerHTML = `
+        <h3 class="job-title">${escapeHtml(job.title)}</h3>
+        <p><strong>Company:</strong> ${escapeHtml(job.company)}</p>
+        <p><strong>Location:</strong> ${escapeHtml(job.location)}</p>
+        <p><strong>Status:</strong> ${escapeHtml(job.status)}</p>
+        <button type="button" class="apply-btn" aria-label="Apply for ${escapeHtml(job.title)}">Apply</button>
+      `;
+      container.appendChild(card);
+    });
   }
 
-  toggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    const isDark = document.body.classList.contains("dark-mode");
-    localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
-    toggleBtn.textContent = isDark ? "☀️" : "🌙";
-  });
-});
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Dark mode setup
+  function setupDarkMode() {
+    const toggleBtn = document.getElementById("darkModeToggle");
+    if (!toggleBtn) return;
+
+    const isDark = localStorage.getItem("darkMode") === "enabled";
+    if (isDark) {
+      document.body.classList.add("dark-mode");
+      toggleBtn.textContent = "☀️";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const enabled = document.body.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", enabled ? "enabled" : "disabled");
+      toggleBtn.textContent = enabled ? "☀️" : "🌙";
+    });
+  }
 </script>
 </body>
 </html>
