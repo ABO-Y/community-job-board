@@ -48,6 +48,23 @@
   firebase.initializeApp(firebaseConfig);
 </script>
 
+      <script>
+  function sendPasswordReset() {
+    const email = prompt("Enter your email to reset your password:");
+    if (!email) return;
+
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        alert("Password reset email sent. Check your inbox.");
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+        alert("Could not send reset email. Please check your email address.");
+      });
+  }
+</script>
+
+
 
     </section>
   </main>
