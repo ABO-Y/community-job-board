@@ -1,86 +1,67 @@
-// job-details.js
+import { db, auth } from './firebase-init.js';
+import { doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// === Fetch Job ID from URL ===
+// Get job ID from URL
 const urlParams = new URLSearchParams(window.location.search);
-const jobId = parseInt(urlParams.get("id"), 10);
+const jobId = urlParams.get('id');
 
-// === DOM Elements ===
-const jobDetailsSection = document.getElementById("job-details");
-const form = document.getElementById("application-form");
-const appSection = document.getElementById("application-section");
+const jobContent = document.getElementById('job-details-content');
+const applicationForm = document.getElementById('application-form');
+const applicationStatus = document.getElementById('application-status');
 
-// === Load Jobs ===
-const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-const job = jobs[jobId];
-
-// === Display Job Details ===
-function displayJobDetails() {
-  if (!job) {
-    jobDetailsSection.innerHTML = `<p>❌ Job not found or has been removed.</p>`;
-    if (appSection) appSection.style.display = "none";
+// Load job details
+async function loadJob() {
+  if (!jobId) {
+    jobContent.innerHTML = `<p class="empty">Job not found.</p>`;
     return;
   }
 
-  jobDetailsSection.innerHTML = `
-    <div class="job-card details">
-      <h2>${job.title}</h2>
-      <p><strong>Category:</strong> ${job.category}</p>
-      <p><strong>Location:</strong> ${job.location}</p>
-      <p><strong>Type:</strong> ${job.type || "Not specified"}</p>
-      <p><strong>Posted by:</strong> ${job.employer || "Anonymous"}</p>
-      <p><strong>Date Posted:</strong> ${job.date || "Unknown"}</p>
-      <p><strong>Description:</strong></p>
+  const docRef = doc(db, 'jobs', jobId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const job = docSnap.data();
+    jobContent.innerHTML = `
+      <h3>${job.title}</h3>
+      <p>Category: ${job.category}</p>
       <p>${job.description}</p>
-    </div>
-  `;
+    `;
+  } else {
+    jobContent.innerHTML = `<p class="empty">Job not found.</p>`;
+  }
 }
 
+// Handle application form submission
+applicationForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-// === Handle Application Submission ===
-if (form) {
-  form.addEventListener("submit", e => {
-    e.preventDefault();
+  const name = applicationForm['name'].value.trim();
+  const email = applicationForm['email'].value.trim();
+  const message = applicationForm['message'].value.trim();
 
-    // Basic Validation
-    const name = document.getElementById("applicant-name").value.trim();
-    const email = document.getElementById("applicant-email").value.trim();
-    const message = document.getElementById("applicant-message").value.trim();
+  if (!name || !email || !message) {
+    applicationStatus.textContent = 'All fields are required.';
+    applicationStatus.hidden = false;
+    return;
+  }
 
-    if (!name || !email || !message) {
-      alert("⚠️ Please fill in all fields before submitting.");
-      return;
-    }
-
-    if (!email.includes("@") || !email.includes(".")) {
-      alert("⚠️ Please enter a valid email address.");
-      return;
-    }
-
-    if (!job) {
-      alert("⚠️ Job no longer exists.");
-      return;
-    }
-
-    const applications = JSON.parse(localStorage.getItem("applications")) || [];
-
-    const newApp = {
-      id: Date.now(), // Unique ID for tracking
+  try {
+    await addDoc(collection(db, 'applications'), {
       jobId,
-      jobTitle: job.title,
       name,
       email,
       message,
-      date: new Date().toLocaleString(),
-    };
+      appliedAt: serverTimestamp()
+    });
 
-    applications.push(newApp);
-    localStorage.setItem("applications", JSON.stringify(applications));
+    applicationStatus.textContent = 'Application submitted successfully!';
+    applicationStatus.hidden = false;
+    applicationForm.reset();
+  } catch (error) {
+    console.error(error);
+    applicationStatus.textContent = 'Failed to submit application. Try again.';
+    applicationStatus.hidden = false;
+  }
+});
 
-    alert("✅ Application submitted successfully!");
-    form.reset();
-  });
-}
-
-
-// === Initialize ===
-window.addEventListener("load", displayJobDetails);
+loadJob();

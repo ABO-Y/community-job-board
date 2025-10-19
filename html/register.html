@@ -3,53 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register - Community Job Board</title>
+  <title>Register</title>
   <link rel="stylesheet" href="../css/main.css" />
-  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="module" defer src="js/register.js"></script>
 </head>
 <body>
-  <header role="banner" class="site-header">
+  <header>
     <nav class="navbar" aria-label="Main navigation">
       <h1 class="brand">Community Job Board</h1>
       <ul class="nav-list">
-        <li><a href="index.html" aria-label="Home">Home</a></li>
-        <li><a href="jobs.html" aria-label="Jobs">Jobs</a></li>
-        <li><a href="login.html" aria-label="Login">Login</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Login</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container" role="main" aria-label="Registration form">
-    <section class="auth-section" aria-labelledby="register-title">
-      <h2 id="register-title">Register</h2>
+  <main class="container">
+    <h2>Register</h2>
+    <form id="register-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Your full name" required>
 
-      <form id="registerForm" autocomplete="on" novalidate>
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" name="name" required placeholder="John Doe" />
-        </div>
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com" required>
 
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required placeholder="you@example.com" />
-        </div>
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Password" required>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Create a password" autocomplete="new-password" />
-        </div>
-
-        <button type="submit" class="btn" aria-label="Register">Register</button>
-
-        <div id="register-status" class="status" role="status" aria-live="polite" hidden></div>
-      </form>
-    </section>
+      <button type="submit">Register</button>
+    </form>
+    <p id="register-status" aria-live="polite"></p>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
   </main>
-
-  <footer role="contentinfo" class="site-footer">
-    <p>&copy; 2025 Community Job Board</p>
-  </footer>
-
-  <script src="../js/auth.js" defer></script>
 </body>
 </html>

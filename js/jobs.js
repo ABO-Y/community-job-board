@@ -1,70 +1,59 @@
-// === Job Data ===
-const jobs = [
-  { title: "Web Developer", category: "IT", location: "Windhoek" },
-  { title: "Teacher", category: "Education", location: "Katutura" },
-  { title: "Shop Assistant", category: "Retail", location: "Swakopmund" },
-  { title: "Nurse", category: "Health", location: "Walvis Bay" },
-];
+import { db } from './firebase-init.js';
+import { collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+const jobsContainer = document.getElementById('jobs-container');
+const keywordInput = document.getElementById('keyword');
+const categorySelect = document.getElementById('category');
+const searchBtn = document.getElementById('search-btn');
 
-// === Display Jobs ===
-function displayJobs(list) {
-  const container = document.getElementById("job-list");
-  container.innerHTML = "";
+async function loadJobs(filterKeyword = '', filterCategory = '') {
+  jobsContainer.innerHTML = `<p class="loading">Loading jobs...</p>`;
 
-  if (list.length === 0) {
-    container.innerHTML = `<p>No jobs found matching your search.</p>`;
+  let q = collection(db, 'jobs');
+
+  if (filterCategory) {
+    q = query(q, where('category', '==', filterCategory));
+  }
+
+  const querySnapshot = await getDocs(q);
+
+  const jobs = [];
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    if (!filterKeyword || data.title.toLowerCase().includes(filterKeyword.toLowerCase())) {
+      jobs.push({ id: doc.id, ...data });
+    }
+  });
+
+  renderJobs(jobs);
+}
+
+function renderJobs(jobs) {
+  if (jobs.length === 0) {
+    jobsContainer.innerHTML = `<p class="empty">No jobs found.</p>`;
     return;
   }
 
-  list.forEach(job => {
-    const card = document.createElement("div");
-    card.classList.add("job-card");
-    card.innerHTML = `
+  jobsContainer.innerHTML = '';
+  jobs.forEach(job => {
+    const jobEl = document.createElement('div');
+    jobEl.classList.add('job-card');
+    jobEl.innerHTML = `
       <h3>${job.title}</h3>
-      <p><strong>Category:</strong> ${job.category}</p>
-      <p><strong>Location:</strong> ${job.location}</p>
+      <p>Category: ${job.category}</p>
+      <p>${job.description.substring(0, 100)}...</p>
+      <a href="job-details.html?id=${job.id}" class="btn">View Details</a>
     `;
-    container.appendChild(card);
+    jobsContainer.appendChild(jobEl);
   });
 }
 
+// Event listeners
+searchBtn.addEventListener('click', () => {
+  const keyword = keywordInput.value.trim();
+  const category = categorySelect.value;
+  loadJobs(keyword, category);
+});
 
-// === Filter Jobs ===
-function filterJobs() {
-  const keyword = document.getElementById("keyword").value.toLowerCase().trim();
-  const category = document.getElementById("category").value;
-
-  const filtered = jobs.filter(j => {
-    const matchesKeyword =
-      j.title.toLowerCase().includes(keyword) ||
-      j.location.toLowerCase().includes(keyword);
-
-    const matchesCategory = !category || j.category === category;
-
-    return matchesKeyword && matchesCategory;
-  });
-
-  displayJobs(filtered);
-}
-
-
-// === Event Listeners ===
-document.getElementById("search-btn").addEventListener("click", filterJobs);
-
-// Allow real-time filtering as user types
-document.getElementById("keyword").addEventListener("input", filterJobs);
-
-// Optional: reset button
-const resetBtn = document.getElementById("reset-btn");
-if (resetBtn) {
-  resetBtn.addEventListener("click", () => {
-    document.getElementById("keyword").value = "";
-    document.getElementById("category").value = "";
-    displayJobs(jobs);
-  });
-}
-
-
-// === Initial Display ===
-displayJobs(jobs);
+// Load all jobs initially
+loadJobs();

@@ -1,186 +1,61 @@
-// admin.js - Improved admin dashboard logic
+// admin.js
+import { db } from './firebase-init.js';
+import { collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// --------- Configuration & helpers ---------
-const STORAGE_KEY = "jobs";
+const pendingJobsContainer = document.getElementById('pending-jobs');
+const approvedJobsContainer = document.getElementById('approved-jobs');
 
-function escapeHTML(str) {
-  if (typeof str !== "string") return "";
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+async function loadJobs() {
+  pendingJobsContainer.innerHTML = '<p class="loading">Loading pending jobs...</p>';
+  approvedJobsContainer.innerHTML = '<p class="loading">Loading approved jobs...</p>';
 
-// Simple in-app notification (non-blocking)
-function notify(message) {
-  let nl = document.getElementById("admin-notify");
-  if (!nl) {
-    nl = document.createElement("div");
-    nl.id = "admin-notify";
-    nl.style.position = "fixed";
-    nl.style.bottom = "12px";
-    nl.style.right = "12px";
-    nl.style.padding = "10px 14px";
-    nl.style.background = "rgba(0,0,0,0.85)";
-    nl.style.color = "#fff";
-    nl.style.borderRadius = "6px";
-    nl.style.fontFamily = "system-ui, -apple-system, Arial";
-    nl.style.fontSize = "14px";
-    nl.style.zIndex = "1000";
-    document.body.appendChild(nl);
-  }
-  nl.textContent = message;
-  nl.style.display = "block";
-  clearTimeout(nl._t);
-  nl._t = setTimeout(() => (nl.style.display = "none"), 1800);
-}
+  const snapshot = await getDocs(collection(db, 'jobs'));
 
-// --------- Data layer: load/save with normalization ---------
-function loadJobs() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    // Normalize: ensure every job has a status
-    return parsed.map(j => ({
-      ...j,
-      status: j.status || "pending",
-    }));
-  } catch (e) {
-    console.error("Failed to load jobs from storage:", e);
-    return [];
-  }
-}
+  pendingJobsContainer.innerHTML = '';
+  approvedJobsContainer.innerHTML = '';
 
-function saveJobs(jobs) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
-  } catch (e) {
-    console.error("Failed to save jobs to storage:", e);
-  }
-}
+  snapshot.forEach(docSnap => {
+    const job = docSnap.data();
+    const jobId = docSnap.id;
 
-// --------- Rendering ---------
-function renderJobCard(job, index) {
-  // Card container
-  const card = document.createElement("div");
-  card.className = "job-card";
+    const jobCard = document.createElement('div');
+    jobCard.classList.add('job-card');
+    jobCard.innerHTML = `
+      <h3>${job.title}</h3>
+      <p>${job.description.substring(0, 100)}...</p>
+      <p><strong>Category:</strong> ${job.category}</p>
+    `;
 
-  card.innerHTML = `
-    <h3 class="job-title">${escapeHTML(job.title)}</h3>
-    <p class="job-meta">${escapeHTML(job.category)} | ${escapeHTML(job.location)}</p>
-    <p class="job-desc">${escapeHTML(job.description)}</p>
-    <p class="job-status">Status: <strong>${escapeHTML(job.status)}</strong></p>
-  `;
+    if (job.approved) {
+      approvedJobsContainer.appendChild(jobCard);
+    } else {
+      const approveBtn = document.createElement('button');
+      approveBtn.textContent = 'Approve';
+      approveBtn.classList.add('btn');
+      approveBtn.addEventListener('click', () => approveJob(jobId));
 
-  // Actions container
-  const actions = document.createElement("div");
-  actions.className = "job-actions";
+      const rejectBtn = document.createElement('button');
+      rejectBtn.textContent = 'Reject';
+      rejectBtn.classList.add('btn', 'btn-reject');
+      rejectBtn.addEventListener('click', () => rejectJob(jobId));
 
-  const addButton = (text, onClick) => {
-    const btn = document.createElement("button");
-    btn.textContent = text;
-    btn.onclick = onClick;
-    btn.setAttribute("aria-label", `${text} ${job.title}`);
-    btn.className = "action-btn";
-    return btn;
-  };
-
-  // Depending on status, show appropriate actions
-  if (job.status === "pending") {
-    const approveBtn = addButton("Approve", () => approveJob(index));
-    const deleteBtn = addButton("Delete", () => deleteJob(index));
-    approveBtn.style.marginRight = "8px";
-    actions.appendChild(approveBtn);
-    actions.appendChild(deleteBtn);
-  } else {
-    const deleteBtn = addButton("Delete", () => deleteJob(index));
-    actions.appendChild(deleteBtn);
-  }
-
-  card.appendChild(actions);
-  return card;
-}
-
-function loadAdminJobs() {
-  const pendingContainer = document.getElementById("pending-jobs");
-  const approvedContainer = document.getElementById("approved-jobs");
-
-  // Clear existing content
-  pendingContainer.innerHTML = "";
-  approvedContainer.innerHTML = "";
-
-  // Use fragments to minimize reflows
-  const fragPending = document.createDocumentFragment();
-  const fragApproved = document.createDocumentFragment();
-
-  jobs.forEach((job, idx) => {
-    const card = renderJobCard(job, idx);
-    if (job.status === "pending") fragPending.appendChild(card);
-    else fragApproved.appendChild(card);
+      jobCard.appendChild(approveBtn);
+      jobCard.appendChild(rejectBtn);
+      pendingJobsContainer.appendChild(jobCard);
+    }
   });
-
-  pendingContainer.appendChild(fragPending);
-  approvedContainer.appendChild(fragApproved);
-
-  // Optional empty state messages
-  if (!jobs.length) {
-    pendingContainer.innerHTML = "<p class='empty'>No jobs found.</p>";
-    approvedContainer.innerHTML = "<p class='empty'>No jobs found.</p>";
-  }
 }
 
-// --------- Actions ---------
-function approveJob(index) {
-  if (!jobs[index]) return;
-  jobs[index].status = "approved";
-  saveJobs(jobs);
-  loadAdminJobs();
-  mockEmailAlert(jobs[index]);
-  notify(`"${jobs[index].title}" has been approved!`);
-  // Return focus to the first item in the pending list for accessibility
-  setTimeout(() => {
-    const firstPending = document.querySelector("#pending-jobs .job-card");
-    if (firstPending) firstPending.querySelector("button").focus();
-  }, 0);
+// Approve a job
+async function approveJob(jobId) {
+  await updateDoc(doc(db, 'jobs', jobId), { approved: true });
+  loadJobs(); // Refresh lists
 }
 
-function deleteJob(index) {
-  const toDelete = jobs[index];
-  if (!toDelete) return;
-  if (confirm("Are you sure you want to delete this job?")) {
-    const [removed] = jobs.splice(index, 1);
-    saveJobs(jobs);
-    loadAdminJobs();
-    notify(`"${removed.title}" was deleted.`);
-  }
+// Reject a job (delete)
+async function rejectJob(jobId) {
+  await updateDoc(doc(db, 'jobs', jobId), { approved: false, rejected: true });
+  loadJobs();
 }
 
-// Mock email alert (keeps existing behavior for now)
-function mockEmailAlert(job) {
-  console.log(`
-  📨 Mock Email Sent
-  -------------------------
-  To: employer@example.com
-  Subject: Job "${job.title}" Approved!
-  Message: Congratulations! Your job post has been approved and is now live.
-  `);
-}
-
-// --------- Init ---------
-let jobs = loadJobs();
-saveJobs(jobs); // ensure storage exists/normalized
-document.addEventListener("DOMContentLoaded", () => {
-  // Optional: wire up logout button (demo)
-  const logoutBtn = document.getElementById("logout");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      // Simple client-side mock: redirect or clear session
-      notify("Logged out (demo).");
-      // In real app: window.location.href = '/login';
-    });
-  }
-
-  loadAdminJobs();
-});
+window.addEventListener('DOMContentLoaded', loadJobs);

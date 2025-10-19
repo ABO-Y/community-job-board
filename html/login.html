@@ -3,48 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Community Job Board</title>
+  <title>Login</title>
   <link rel="stylesheet" href="../css/main.css" />
-  <!-- Defer jQuery if you’re using vanilla JS elsewhere; keep only if needed -->
-  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="module" defer src="js/login.js"></script>
 </head>
 <body>
-  <header role="banner" class="site-header">
+  <header>
     <nav class="navbar" aria-label="Main navigation">
       <h1 class="brand">Community Job Board</h1>
       <ul class="nav-list">
-        <li><a href="index.html" aria-label="Home">Home</a></li>
-        <li><a href="jobs.html" aria-label="Jobs">Jobs</a></li>
-        <li><a href="post-job.html" aria-label="Post Job">Post Job</a></li>
-        <li><a href="register.html" aria-label="Register">Register</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="register.html">Register</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container" role="main" aria-label="Login panel">
-    <section class="auth-section" aria-labelledby="login-title">
-      <h2 id="login-title">Login</h2>
+  <main class="container">
+    <h2>Login</h2>
+    <form id="login-form">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com" required>
 
-      <form id="loginForm" autocomplete="on" novalidate>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required placeholder="you@example.com" />
-        </div>
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Password" required>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required placeholder="Your password" autocomplete="current-password" />
-        </div>
-
-        <button type="submit" class="btn" aria-label="Login">Login</button>
-
-        <div id="login-error" class="error" role="alert" aria-live="polite" hidden></div>
-      </form>
-    </section>
-
-    <p class="hint">Don't have an account? <a href="register.html">Register here</a></p>
+      <button type="submit">Login</button>
+    </form>
+    <p id="login-status" aria-live="polite"></p>
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
   </main>
-
-  <script src="../js/auth.js" defer></script>
 </body>
 </html>
