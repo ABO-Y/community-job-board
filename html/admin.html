@@ -95,54 +95,12 @@
             </div>
         </section>
 
-        <section class="job-section" aria-labelledby="approved-label">
-            <div class="section-header">
-                <h2 id="approved-label">Approved Jobs</h2>
-                <div class="view-toggle">
-                    <button 
-                        class="btn btn-icon active" 
-                        aria-label="Grid view"
-                        data-view="grid">
-                        <span class="icon-grid" aria-hidden="true"></span>
-                    </button>
-                    <button 
-                        class="btn btn-icon" 
-                        aria-label="List view"
-                        data-view="list">
-                        <span class="icon-list" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-
-            <div 
-                id="approved-jobs" 
-                class="job-grid" 
-                role="region" 
-                aria-live="polite">
-                <div class="loading" hidden>
-                    <span class="spinner"></span>
-                    <span>Loading jobs...</span>
-                </div>
-            </div>
-
-            <div class="pagination" aria-label="Pagination" hidden>
-                <button class="btn btn-outline" id="load-more">Load More</button>
-            </div>
-        </section>
-    </main>
-
-    <footer role="contentinfo" class="site-footer">
-        <div class="container">
-            <p>&copy; 2025 Community Job Board. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <div 
-        id="notification" 
-        class="notification" 
-        role="alert" 
-        aria-live="polite" 
-        hidden>
-    </div>
+    <section class="job-section" aria-labelledby="approved-label">
+      <h2 id="approved-label">Approved Jobs</h2>
+      <div id="approved-jobs" class="job-grid" aria-live="polite">
+        <!-- JS injects approved jobs here -->
+      </div>
+    </section>
+  </main>
 </body>
 </html>
