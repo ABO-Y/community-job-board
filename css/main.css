@@ -706,6 +706,16 @@ footer {
   overflow: hidden;
 }
 
+.forgot-link {
+  color: #2a5298;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+.forgot-link:hover {
+  color: #3b6cb7;
+}
+
+
 footer::before {
   content: '';
   position: absolute;
