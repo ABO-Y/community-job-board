@@ -1,6 +1,6 @@
 // auth.js
 
-// --- Helper Functions ---
+// === Helper Functions ===
 function getUsers() {
   return JSON.parse(localStorage.getItem("users")) || [];
 }
@@ -9,49 +9,99 @@ function saveUsers(users) {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-// --- Registration ---
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem("currentUser"));
+}
+
+function setCurrentUser(user) {
+  localStorage.setItem("currentUser", JSON.stringify(user));
+}
+
+function showAlert(message, type = "info") {
+  // Simple alert wrapper (can be styled later)
+  alert(message);
+}
+
+
+// === Registration ===
 const registerForm = document.getElementById("registerForm");
+
 if (registerForm) {
-  registerForm.addEventListener("submit", function (e) {
+  registerForm.addEventListener("submit", e => {
     e.preventDefault();
+
     const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value.trim();
 
-    const users = getUsers();
-    const userExists = users.find(u => u.email === email);
-
-    if (userExists) {
-      alert("Email already registered!");
+    // Basic validation
+    if (!name || !email || !password) {
+      showAlert("Please fill in all fields.", "warning");
       return;
     }
 
-    users.push({ name, email, password });
+    if (!email.includes("@") || !email.includes(".")) {
+      showAlert("Please enter a valid email address.", "warning");
+      return;
+    }
+
+    if (password.length < 6) {
+      showAlert("Password must be at least 6 characters long.", "warning");
+      return;
+    }
+
+    const users = getUsers();
+    const userExists = users.some(u => u.email === email);
+
+    if (userExists) {
+      showAlert("Email already registered!", "error");
+      return;
+    }
+
+    const newUser = { name, email, password };
+    users.push(newUser);
     saveUsers(users);
-    alert("Registration successful! You can now log in.");
-    window.location.href = "login.html"; // Redirect to login
+
+    showAlert("✅ Registration successful! You can now log in.", "success");
+    registerForm.reset();
+    setTimeout(() => (window.location.href = "login.html"), 500);
   });
 }
 
-// --- Login ---
+
+// === Login ===
 const loginForm = document.getElementById("loginForm");
+
 if (loginForm) {
-  loginForm.addEventListener("submit", function (e) {
+  loginForm.addEventListener("submit", e => {
     e.preventDefault();
-    const email = document.getElementById("email").value.trim();
+
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+      showAlert("Please fill in all fields.", "warning");
+      return;
+    }
 
     const users = getUsers();
     const user = users.find(u => u.email === email && u.password === password);
 
     if (!user) {
-      alert("Invalid email or password!");
+      showAlert("Invalid email or password!", "error");
       return;
     }
 
-    // Save current logged-in user
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    alert(`Welcome, ${user.name}!`);
-    window.location.href = "dashboard.html"; // Redirect to dashboard
+    setCurrentUser(user);
+    showAlert(`👋 Welcome, ${user.name}!`, "success");
+
+    setTimeout(() => (window.location.href = "dashboard.html"), 500);
   });
+}
+
+
+// === Logout Helper (Optional) ===
+function logout() {
+  localStorage.removeItem("currentUser");
+  window.location.href = "login.html";
 }
