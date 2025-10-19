@@ -3,55 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Post Job</title>
+  <meta name="description" content="Post a new job listing on Community Job Board" />
+  <title>Post Job - Community Job Board</title>
   <link rel="stylesheet" href="../css/main.css" />
-  <script type="module" defer src="js/post-job.js"></script>
+  <script type="module" defer src="../js/post-job.js"></script>
 </head>
 <body>
-  <header>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <header role="banner">
     <nav class="navbar" aria-label="Main navigation">
       <h1 class="logo">Employer Dashboard</h1>
       <ul class="nav-list">
         <li><a href="dashboard.html">Dashboard</a></li>
         <li><a href="applications.html">Applications</a></li>
-        <li><a href="index.html">Logout</a></li>
+        <li><button id="logout-btn" class="nav-btn">Logout</button></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container" role="main">
+  <main id="main" class="container" role="main">
     <section class="post-job-section" aria-labelledby="post-job-title">
       <h2 id="post-job-title">Post a New Job</h2>
-      <form id="post-job-form">
+      
+      <form id="post-job-form" novalidate>
         <div class="form-group">
-          <label for="title">Job Title</label>
-          <input type="text" id="title" name="title" required placeholder="Enter job title" />
+          <label for="title">Job Title <span aria-label="required">*</span></label>
+          <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            required 
+            minlength="5"
+            maxlength="100"
+            placeholder="e.g., Senior Software Engineer"
+            aria-required="true" />
         </div>
 
         <div class="form-group">
-          <label for="company">Company Name</label>
-          <input type="text" id="company" name="company" required placeholder="Enter company name" />
+          <label for="company">Company Name <span aria-label="required">*</span></label>
+          <input 
+            type="text" 
+            id="company" 
+            name="company" 
+            required
+            maxlength="100"
+            placeholder="Your company name"
+            aria-required="true" />
         </div>
 
         <div class="form-group">
-          <label for="category">Category</label>
-          <select id="category" name="category" required>
-            <option value="">Select category</option>
-            <option value="IT">IT</option>
-            <option value="Education">Education</option>
-            <option value="Retail">Retail</option>
+          <label for="category">Job Category <span aria-label="required">*</span></label>
+          <select id="category" name="category" required aria-required="true">
+            <option value="">Select a category</option>
+            <option value="technology">Technology</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+            <option value="finance">Finance</option>
+            <option value="retail">Retail</option>
+            <option value="other">Other</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="description">Job Description</label>
-          <textarea id="description" name="description" rows="6" required placeholder="Enter job description"></textarea>
+          <label for="location">Location <span aria-label="required">*</span></label>
+          <input 
+            type="text" 
+            id="location" 
+            name="location" 
+            required
+            placeholder="City, State or Remote"
+            aria-required="true" />
         </div>
 
-        <button type="submit" class="btn">Post Job</button>
+        <div class="form-group">
+          <label for="type">Employment Type <span aria-label="required">*</span></label>
+          <select id="type" name="type" required aria-required="true">
+            <option value="">Select type</option>
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+            <option value="contract">Contract</option>
+            <option value="internship">Internship</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="salary">Salary Range</label>
+          <input 
+            type="text" 
+            id="salary" 
+            name="salary" 
+            placeholder="e.g., $50,000 - $70,000/year or Competitive" />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Job Description <span aria-label="required">*</span></label>
+          <textarea 
+            id="description" 
+            name="description" 
+            required
+            minlength="100"
+            rows="8"
+            placeholder="Describe the role, requirements, and responsibilities"
+            aria-required="true"></textarea>
+          <p class="help-text" id="description-help">
+            Minimum 100 characters. Include key responsibilities, requirements, and benefits.
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Post Job</button>
+          <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+        </div>
       </form>
-      <p id="status-message" class="status" hidden></p>
+
+      <div id="status-message" class="alert" role="alert" aria-live="polite" hidden></div>
     </section>
   </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 Community Job Board. All rights reserved.</p>
+  </footer>
+
+  <div id="loading-spinner" class="spinner" hidden>Loading...</div>
 </body>
 </html>

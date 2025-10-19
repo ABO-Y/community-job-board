@@ -1,31 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Employer Dashboard</title>
-  <link rel="stylesheet" href="../css/main.css" />
-  <script type="module" defer src="js/dashboard.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Manage your job postings and applications on Community Job Board" />
+    <title>Employer Dashboard - Community Job Board</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <script type="module" defer src="../js/dashboard.js"></script>
 </head>
 <body>
-  <header>
-    <nav class="navbar" aria-label="Main navigation">
-      <h1 class="logo">Employer Dashboard</h1>
-      <ul class="nav-list">
-        <li><a href="dashboard.html">My Jobs</a></li>
-        <li><a href="post-job.html">Post Job</a></li>
-        <li><a href="applications.html">Applications</a></li>
-        <li><button id="logout">Logout</button></li>
-      </ul>
-    </nav>
-  </header>
+    <a href="#main" class="skip-link">Skip to main content</a>
 
-  <main class="container">
-    <h2>My Posted Jobs</h2>
-    <div id="jobs-container" aria-live="polite">
-      <p class="loading">Loading jobs...</p>
-      <p class="empty" hidden>No jobs posted yet.</p>
+    <header role="banner">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="navbar-brand">
+                <h1 class="logo">Employer Dashboard</h1>
+                <button 
+                    class="menu-toggle" 
+                    aria-label="Toggle menu" 
+                    aria-expanded="false"
+                    hidden>
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+            <ul class="nav-list" role="menubar">
+                <li role="none">
+                    <a href="dashboard.html" role="menuitem" aria-current="page">My Jobs</a>
+                </li>
+                <li role="none">
+                    <a href="post-job.html" role="menuitem">Post Job</a>
+                </li>
+                <li role="none">
+                    <a href="applications.html" role="menuitem">Applications</a>
+                </li>
+                <li role="none">
+                    <button id="logout" class="btn btn-outline" role="menuitem">
+                        Logout
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main" class="container" role="main">
+        <div class="dashboard-header">
+            <h2>My Posted Jobs</h2>
+            <a href="post-job.html" class="btn btn-primary">Post New Job</a>
+        </div>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Active Jobs</h3>
+                <p id="active-count">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Applications</h3>
+                <p id="applications-count">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Views This Week</h3>
+                <p id="views-count">-</p>
+            </div>
+        </div>
+
+        <section class="jobs-section" aria-labelledby="jobs-heading">
+            <h3 id="jobs-heading" class="sr-only">Posted Jobs</h3>
+            
+            <div class="jobs-filters">
+                <select id="status-filter" aria-label="Filter by status">
+                    <option value="">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="expired">Expired</option>
+                    <option value="draft">Draft</option>
+                </select>
+                <input 
+                    type="search" 
+                    id="search-jobs" 
+                    placeholder="Search your jobs"
+                    aria-label="Search jobs" />
+            </div>
+
+            <div id="jobs-container" 
+                class="jobs-grid" 
+                role="region" 
+                aria-live="polite">
+                <div class="loading" aria-hidden="false">
+                    <span class="spinner"></span>
+                    <span>Loading jobs...</span>
+                </div>
+                <p class="empty" hidden>No jobs posted yet. 
+                    <a href="post-job.html">Post your first job</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo" class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Community Job Board. All rights reserved.</p>
+            <nav aria-label="Footer navigation">
+                <ul>
+                    <li><a href="help.html">Help Center</a></li>
+                    <li><a href="contact.html">Contact Support</a></li>
+                    <li><a href="terms.html">Terms of Use</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+    <div 
+        id="notification" 
+        class="notification" 
+        role="alert" 
+        aria-live="polite" 
+        hidden>
     </div>
-  </main>
 </body>
 </html>

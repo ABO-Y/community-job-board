@@ -4,6 +4,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBvTgyi1cgUUCVRZKz8V9tVHlNpfAYnuwk",
   authDomain: "community-job-board-61749.firebaseapp.com",
@@ -16,7 +17,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+let analytics;
+try {
+  analytics = getAnalytics(app);
+} catch (err) {
+  // analytics may fail in some environments (file://). Ignore.
+  console.warn("Analytics init failed:", err);
+}
 
 // Export for other JS files
 export const auth = getAuth(app);

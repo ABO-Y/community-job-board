@@ -1,38 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="../css/main.css" />
-  <script type="module" defer src="js/admin.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Admin dashboard for managing job listings and site content" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin Dashboard - Community Job Board</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <script type="module" defer src="../js/admin.js"></script>
 </head>
 <body>
-  <header>
-    <nav class="navbar" aria-label="Main navigation">
-      <h1 class="logo">Admin Dashboard</h1>
-      <ul class="nav-list">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="dashboard.html">Employer Dashboard</a></li>
-        <li><a href="login.html">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+    <a href="#main" class="skip-link">Skip to main content</a>
 
-  <main class="container" role="main">
-    <section class="job-section" aria-labelledby="pending-label">
-      <h2 id="pending-label">Pending Job Approvals</h2>
-      <div id="pending-jobs" class="job-grid" aria-live="polite">
-        <!-- JS injects pending jobs here -->
-      </div>
-    </section>
+    <header role="banner">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="navbar-brand">
+                <h1 class="logo">Admin Dashboard</h1>
+                <button 
+                    class="menu-toggle" 
+                    aria-label="Toggle menu" 
+                    aria-expanded="false"
+                    hidden>
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+            <ul class="nav-list" role="menubar">
+                <li role="none">
+                    <a href="admin.html" role="menuitem" aria-current="page">Dashboard</a>
+                </li>
+                <li role="none">
+                    <a href="admin-users.html" role="menuitem">Users</a>
+                </li>
+                <li role="none">
+                    <a href="admin-reports.html" role="menuitem">Reports</a>
+                </li>
+                <li role="none">
+                    <button id="logout" class="btn btn-outline" role="menuitem">
+                        Logout
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
-    <section class="job-section" aria-labelledby="approved-label">
-      <h2 id="approved-label">Approved Jobs</h2>
-      <div id="approved-jobs" class="job-grid" aria-live="polite">
-        <!-- JS injects approved jobs here -->
-      </div>
-    </section>
-  </main>
+    <main id="main" class="container" role="main">
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Pending Jobs</h3>
+                <p id="pending-count">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Jobs</h3>
+                <p id="active-count">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p id="users-count">-</p>
+            </div>
+        </div>
+
+        <section class="job-section" aria-labelledby="pending-label">
+            <div class="section-header">
+                <h2 id="pending-label">Pending Job Approvals</h2>
+                <div class="actions">
+                    <select id="bulk-action" aria-label="Bulk actions">
+                        <option value="">Bulk Actions</option>
+                        <option value="approve">Approve Selected</option>
+                        <option value="reject">Reject Selected</option>
+                    </select>
+                    <button class="btn btn-secondary" id="apply-bulk">Apply</button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <input 
+                    type="search" 
+                    id="search-pending" 
+                    placeholder="Search pending jobs"
+                    aria-label="Search pending jobs" />
+                <select id="category-filter" aria-label="Filter by category">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+
+            <div 
+                id="pending-jobs" 
+                class="job-grid" 
+                role="region" 
+                aria-live="polite">
+                <div class="loading" hidden>
+                    <span class="spinner"></span>
+                    <span>Loading jobs...</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="job-section" aria-labelledby="approved-label">
+            <div class="section-header">
+                <h2 id="approved-label">Approved Jobs</h2>
+                <div class="view-toggle">
+                    <button 
+                        class="btn btn-icon active" 
+                        aria-label="Grid view"
+                        data-view="grid">
+                        <span class="icon-grid" aria-hidden="true"></span>
+                    </button>
+                    <button 
+                        class="btn btn-icon" 
+                        aria-label="List view"
+                        data-view="list">
+                        <span class="icon-list" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div 
+                id="approved-jobs" 
+                class="job-grid" 
+                role="region" 
+                aria-live="polite">
+                <div class="loading" hidden>
+                    <span class="spinner"></span>
+                    <span>Loading jobs...</span>
+                </div>
+            </div>
+
+            <div class="pagination" aria-label="Pagination" hidden>
+                <button class="btn btn-outline" id="load-more">Load More</button>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo" class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Community Job Board. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div 
+        id="notification" 
+        class="notification" 
+        role="alert" 
+        aria-live="polite" 
+        hidden>
+    </div>
 </body>
 </html>

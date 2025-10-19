@@ -1,39 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Community Job Board</title>
-  <link rel="stylesheet" href="../css/main.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Community Job Board — Your local job marketplace. Find and post jobs in your community." />
+    <meta name="keywords" content="jobs, local jobs, community jobs, job board, employment" />
+    <meta name="theme-color" content="#4a90e2" />
+    <title>Community Job Board - Find & Post Local Jobs</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon" />
+    <!-- Preconnect to Firebase -->
+    <link rel="preconnect" href="https://firebaseapp.com" />
 </head>
 <body>
-  <header role="banner" class="site-header">
-    <nav class="navbar" aria-label="Main navigation">
-      <h1 class="brand">Community Job Board</h1>
-      <ul class="nav-list">
-        <li><a href="index.html" aria-label="Home">Home</a></li>
-        <li><a href="jobs.html" aria-label="Jobs">Jobs</a></li>
-        <li><a href="post-job.html" aria-label="Post a Job">Post Job</a></li>
-        <li><a href="login.html" aria-label="Login">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    <a class="skip-link" href="#main">Skip to content</a>
+    
+    <header role="banner" class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <a href="index.html" class="brand">
+                <img src="../assets/logo.svg" alt="Community Job Board" width="200" height="40" />
+            </a>
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" hidden>
+                <span class="sr-only">Menu</span>
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-list">
+                <li><a href="index.html" aria-current="page">Home</a></li>
+                <li><a href="jobs.html">Browse Jobs</a></li>
+                <li><a href="post-job.html">Post Job</a></li>
+                <li><a href="login.html" class="btn btn-outline">Sign In</a></li>
+                <li><a href="register.html" class="btn btn-primary">Register</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main class="container" role="main">
-    <section class="hero" aria-labelledby="heroTitle">
-      <h2 id="heroTitle">Connecting Local Talent with Local Opportunity</h2>
-      <p>Find jobs near you or post openings for your community.</p>
-      <a href="jobs.html" class="btn" aria-label="Browse Jobs">Browse Jobs</a>
-    </section>
-  </main>
+    <main id="main" class="container" role="main">
+        <section class="hero" aria-labelledby="heroTitle">
+            <div class="hero-content">
+                <h1 id="heroTitle">Find Your Next Opportunity</h1>
+                <p class="hero-subtitle">Connecting local talent with local businesses. Browse thousands of job openings or post your positions.</p>
+                <div class="hero-actions">
+                    <a href="jobs.html" class="btn btn-primary btn-large">Find Jobs</a>
+                    <a href="post-job.html" class="btn btn-secondary btn-large">Post a Job</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">1,000+</span>
+                        <span class="stat-label">Active Jobs</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Companies</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <footer role="contentinfo" class="site-footer">
-    <p>&copy; 2025 Community Job Board</p>
-  </footer>
+        <section class="features" aria-labelledby="featuresTitle">
+            <h2 id="featuresTitle" class="section-title">Why Choose Us</h2>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <img src="../assets/icons/local.svg" alt="" aria-hidden="true" />
+                    <h3>Local Focus</h3>
+                    <p>Find opportunities in your community</p>
+                </article>
+                <article class="feature-card">
+                    <img src="../assets/icons/easy.svg" alt="" aria-hidden="true" />
+                    <h3>Easy to Use</h3>
+                    <p>Simple job posting and application process</p>
+                </article>
+                <article class="feature-card">
+                    <img src="../assets/icons/verified.svg" alt="" aria-hidden="true" />
+                    <h3>Verified Employers</h3>
+                    <p>All companies are vetted and verified</p>
+                </article>
+            </div>
+        </section>
+    </main>
 
-  <button id="darkModeToggle" class="floating-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+    <footer role="contentinfo" class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="../assets/logo-white.svg" alt="Community Job Board" width="150" height="30" />
+                    <p>Your local job marketplace</p>
+                </div>
+                <nav class="footer-nav" aria-label="Footer navigation">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="jobs.html">Browse Jobs</a></li>
+                        <li><a href="post-job.html">Post a Job</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="footer-legal">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Community Job Board. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-  <script type="module" src="js/firebase-init.js"></script>
-  <script src="js/dark-mode.js" defer></script>
+    <button 
+        id="darkModeToggle" 
+        class="floating-toggle" 
+        title="Toggle dark mode" 
+        aria-label="Toggle dark mode">
+        <span class="mode-icon" aria-hidden="true">🌙</span>
+    </button>
+
+    <script type="module" src="../js/firebase-init.js"></script>
+    <script type="module" src="../js/dark-mode.js"></script>
 </body>
 </html>

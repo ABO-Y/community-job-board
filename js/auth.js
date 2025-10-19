@@ -1,107 +1,159 @@
 // auth.js
+import { auth, db } from "./firebase-init.js";
+import { 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// === Helper Functions ===
-function getUsers() {
-  return JSON.parse(localStorage.getItem("users")) || [];
+const elements = {
+  registerForm: document.getElementById("registerForm"),
+  loginForm: document.getElementById("loginForm"),
+  statusMessage: document.getElementById("status-message")
+};
+
+function showStatus(message, type = "info") {
+  if (!elements.statusMessage) return;
+  
+  elements.statusMessage.textContent = message;
+  elements.statusMessage.className = `alert alert-${type}`;
+  elements.statusMessage.hidden = false;
+  
+  // Accessibility
+  elements.statusMessage.setAttribute("role", "alert");
+  elements.statusMessage.setAttribute("aria-live", "polite");
 }
 
-function saveUsers(users) {
-  localStorage.setItem("users", JSON.stringify(users));
-}
-
-function getCurrentUser() {
-  return JSON.parse(localStorage.getItem("currentUser"));
-}
-
-function setCurrentUser(user) {
-  localStorage.setItem("currentUser", JSON.stringify(user));
-}
-
-function showAlert(message, type = "info") {
-  // Simple alert wrapper (can be styled later)
-  alert(message);
-}
-
-
-// === Registration ===
-const registerForm = document.getElementById("registerForm");
-
-if (registerForm) {
-  registerForm.addEventListener("submit", e => {
-    e.preventDefault();
-
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const password = document.getElementById("password").value.trim();
-
-    // Basic validation
-    if (!name || !email || !password) {
-      showAlert("Please fill in all fields.", "warning");
-      return;
-    }
-
-    if (!email.includes("@") || !email.includes(".")) {
-      showAlert("Please enter a valid email address.", "warning");
-      return;
-    }
-
-    if (password.length < 6) {
-      showAlert("Password must be at least 6 characters long.", "warning");
-      return;
-    }
-
-    const users = getUsers();
-    const userExists = users.some(u => u.email === email);
-
-    if (userExists) {
-      showAlert("Email already registered!", "error");
-      return;
-    }
-
-    const newUser = { name, email, password };
-    users.push(newUser);
-    saveUsers(users);
-
-    showAlert("✅ Registration successful! You can now log in.", "success");
-    registerForm.reset();
-    setTimeout(() => (window.location.href = "login.html"), 500);
+function setLoading(form, isLoading) {
+  const submitBtn = form.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = isLoading;
+    submitBtn.textContent = isLoading ? "Please wait..." : 
+      (form.id === "registerForm" ? "Register" : "Login");
+  }
+  
+  Array.from(form.elements).forEach(el => {
+    if (el.type !== "submit") el.disabled = isLoading;
   });
 }
 
-
-// === Login ===
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-  loginForm.addEventListener("submit", e => {
+// Registration
+if (elements.registerForm) {
+  elements.registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const name = formData.get("name")?.trim();
+    const email = formData.get("email")?.trim().toLowerCase();
+    const password = formData.get("password")?.trim();
 
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const password = document.getElementById("password").value.trim();
+    // Validation
+    if (!name || !email || !password) {
+      showStatus("Please fill in all fields", "error");
+      return;
+    }
+
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      showStatus("Please enter a valid email address", "error");
+      return;
+    }
+
+    if (password.length < 8) {
+      showStatus("Password must be at least 8 characters", "error");
+      return;
+    }
+
+    setLoading(elements.registerForm, true);
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Update profile with display name
+      await updateProfile(user, {
+        displayName: name
+      });
+
+      // Store additional user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        role: "user",
+        createdAt: new Date().toISOString()
+      });
+
+      showStatus("Registration successful! Redirecting...", "success");
+      
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1500);
+
+    } catch (error) {
+      console.error("Registration error:", error);
+      let message = "Registration failed. Please try again.";
+      
+      if (error.code === "auth/email-already-in-use") {
+        message = "This email is already registered. Try logging in.";
+      }
+      
+      showStatus(message, "error");
+    } finally {
+      setLoading(elements.registerForm, false);
+    }
+  });
+}
+
+// Login
+if (elements.loginForm) {
+  elements.loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const email = formData.get("email")?.trim().toLowerCase();
+    const password = formData.get("password")?.trim();
 
     if (!email || !password) {
-      showAlert("Please fill in all fields.", "warning");
+      showStatus("Please enter both email and password", "error");
       return;
     }
 
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
+    setLoading(elements.loginForm, true);
 
-    if (!user) {
-      showAlert("Invalid email or password!", "error");
-      return;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      showStatus("Login successful! Redirecting...", "success");
+      
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1000);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      let message = "Login failed. Please check your credentials.";
+      
+      if (error.code === "auth/user-not-found") {
+        message = "No account found with this email.";
+      } else if (error.code === "auth/wrong-password") {
+        message = "Incorrect password.";
+      }
+      
+      showStatus(message, "error");
+    } finally {
+      setLoading(elements.loginForm, false);
     }
-
-    setCurrentUser(user);
-    showAlert(`👋 Welcome, ${user.name}!`, "success");
-
-    setTimeout(() => (window.location.href = "dashboard.html"), 500);
   });
 }
 
-
-// === Logout Helper (Optional) ===
-function logout() {
-  localStorage.removeItem("currentUser");
-  window.location.href = "login.html";
+// Export logout function for use in other files
+export async function logout() {
+  try {
+    await signOut(auth);
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error("Logout error:", error);
+    showStatus("Failed to log out. Please try again.", "error");
+  }
 }

@@ -1,48 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>View Applications</title>
-  <link rel="stylesheet" href="../css/main.css" />
-  <script type="module" defer src="js/applications.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Manage and review job applications from your posted positions" />
+    <title>Job Applications - Community Job Board</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <script type="module" defer src="../js/applications.js"></script>
 </head>
 <body>
-  <header>
-    <nav class="navbar" aria-label="Main navigation">
-      <h1 class="logo">Employer Dashboard</h1>
-      <ul class="nav-list">
-        <li><a href="dashboard.html">My Jobs</a></li>
-        <li><a href="post-job.html">Post Job</a></li>
-        <li><a href="applications.html" class="active">Applications</a></li>
-        <li><a href="index.html">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+    <a href="#main" class="skip-link">Skip to main content</a>
 
-  <main class="container" role="main">
-    <section class="applications-section" aria-labelledby="applications-title">
-      <h2 id="applications-title">Job Applications</h2>
+    <header role="banner">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="navbar-brand">
+                <h1 class="logo">Employer Dashboard</h1>
+                <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" hidden>
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+            <ul class="nav-list" role="menubar">
+                <li role="none"><a href="dashboard.html" role="menuitem">My Jobs</a></li>
+                <li role="none"><a href="post-job.html" role="menuitem">Post Job</a></li>
+                <li role="none">
+                    <a href="applications.html" role="menuitem" aria-current="page">Applications</a>
+                </li>
+                <li role="none">
+                    <button id="logout" class="btn btn-outline" role="menuitem">Logout</button>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
-      <!-- Filter Controls -->
-      <form class="filter-bar" id="filter-form" onsubmit="return false;" aria-label="Filter applications">
-        <label class="visually-hidden" for="searchInput">Search applicants</label>
-        <input type="text" id="searchInput" placeholder="Search by applicant name or email..." autocomplete="off" />
+    <main id="main" class="container" role="main">
+        <section class="applications-section" aria-labelledby="applications-title">
+            <div class="section-header">
+                <h2 id="applications-title">Job Applications</h2>
+                <div class="view-toggle">
+                    <button 
+                        class="btn btn-icon active" 
+                        aria-label="Grid view"
+                        data-view="grid">
+                        <span class="icon-grid" aria-hidden="true"></span>
+                    </button>
+                    <button 
+                        class="btn btn-icon" 
+                        aria-label="List view"
+                        data-view="list">
+                        <span class="icon-list" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
 
-        <label class="visually-hidden" for="jobFilter">Filter by job</label>
-        <select id="jobFilter">
-          <option value="">All Job Titles</option>
-          <!-- JS will populate job titles -->
-        </select>
-      </form>
+            <div class="filter-section">
+                <form class="filter-bar" id="filter-form" aria-label="Filter applications">
+                    <div class="search-group">
+                        <label for="searchInput">Search</label>
+                        <input 
+                            type="search" 
+                            id="searchInput" 
+                            placeholder="Search by name or email"
+                            autocomplete="off" />
+                    </div>
 
-      <!-- Applications List -->
-      <div id="applications-list" role="region" aria-label="Applications list">
-        <p class="loading" aria-live="polite">Loading applications...</p>
-        <p class="empty" aria-live="polite" hidden>No applications found.</p>
-        <!-- Applications will be injected here by JS -->
-      </div>
-    </section>
-  </main>
+                    <div class="filter-group">
+                        <label for="jobFilter">Job Title</label>
+                        <select id="jobFilter">
+                            <option value="">All Jobs</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="statusFilter">Status</label>
+                        <select id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <button type="reset" class="btn btn-outline" aria-label="Clear filters">
+                        Clear
+                    </button>
+                </form>
+            </div>
+
+            <div 
+                id="applications-list" 
+                class="applications-grid" 
+                role="region" 
+                aria-label="Applications list"
+                aria-live="polite">
+                
+                <div class="loading-state" aria-hidden="false">
+                    <span class="spinner"></span>
+                    <p>Loading applications...</p>
+                </div>
+
+                <div class="empty-state" hidden>
+                    <p>No applications found matching your criteria.</p>
+                    <button class="btn btn-secondary" onclick="clearFilters()">
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+
+            <div class="pagination" aria-label="Pagination" hidden>
+                <button class="btn btn-outline" id="load-more">
+                    Load More
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo" class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Community Job Board. All rights reserved.</p>
+            <nav aria-label="Footer navigation">
+                <ul>
+                    <li><a href="help.html">Help</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="privacy.html">Privacy</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+
+    <div 
+        id="notification" 
+        class="notification" 
+        role="alert" 
+        aria-live="polite" 
+        hidden>
+    </div>
 </body>
 </html>
